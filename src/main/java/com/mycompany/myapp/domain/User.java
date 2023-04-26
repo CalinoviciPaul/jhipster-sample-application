@@ -26,8 +26,7 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private String id;
+
 
     @NotNull
     @Pattern(regexp = Constants.LOGIN_REGEX)
@@ -70,14 +69,6 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getLogin() {
         return login;
@@ -152,7 +143,7 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
         if (!(o instanceof User)) {
             return false;
         }
-        return id != null && id.equals(((User) o).id);
+        return this.getId() != null && this.getId().equals(((User) o).getId());
     }
 
     @Override

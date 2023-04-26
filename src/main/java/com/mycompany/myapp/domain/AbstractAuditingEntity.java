@@ -3,9 +3,10 @@ package com.mycompany.myapp.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import java.util.Date;
+import javax.persistence.*;
+
+import com.mycompany.myapp.utils.UUIDGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -23,7 +24,9 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public abstract T getId();
+    @Id
+    @Column(name = "uuid", length = 32)
+    private String id;
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, length = 50, updatable = false)
@@ -40,6 +43,19 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
     @LastModifiedDate
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate = Instant.now();
+
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = createUUID();
+        }
+    }
+
+
+    protected String createUUID() {
+        return UUIDGenerator.next();
+    }
+
 
     public String getCreatedBy() {
         return createdBy;
@@ -71,5 +87,13 @@ public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
